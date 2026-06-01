@@ -118,7 +118,31 @@ For high-load production scaling, the following system architecture upgrades are
 
 ---
 
-### Step A: Start the Backend REST API
+### ⚡ Method 1: One-Click PowerShell Setup (Recommended for Windows)
+
+We provide an automated PowerShell script at the root directory that handles environment configurations, package installations, Prisma client compilation, relational database migrations, and boots both the backend API and frontend dashboard client concurrently in active separate consoles.
+
+1.  Open **PowerShell** (as administrator if execution policies restrict script runs) and navigate to the project root:
+    ```powershell
+    cd "c:\Users\Naman Kumar\Desktop\assinglemt"
+    ```
+2.  Enable script execution policies for the active terminal session if needed:
+    ```powershell
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+    ```
+3.  Run the orchestrator script:
+    ```powershell
+    .\setup-and-start.ps1
+    ```
+    This script will take care of everything and open two standalone consoles for both dev servers!
+
+---
+
+### 🛠️ Method 2: Manual Step-by-Step Installation
+
+If you prefer to configure modules individually or are on a non-Windows environment, follow these steps:
+
+#### Step A: Start the Backend REST API
 
 1.  Navigate to the backend directory:
     ```bash
