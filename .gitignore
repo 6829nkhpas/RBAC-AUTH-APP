@@ -1,0 +1,29 @@
+# Node packages
+node_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Database files
+*.db
+*.db-journal
+prisma/migrations/**/*.sql
+
+# Log files
+logs/
+*.log
+
+# Environments
+.env
+.env.local
+.env.production
+
+# IDEs and System files
+.DS_Store
+.vscode/
+.idea/
+.gemini/
+antigravity-ide/
