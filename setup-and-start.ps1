@@ -12,13 +12,14 @@ Write-Host ""
 # Step 1: Pre-requisites Verification
 # ---------------------------------------------------------
 Write-Host "[1/4] Checking Node.js environment installation..." -ForegroundColor Blue
-try {
-    $nodeVersion = node -v
-    Write-Host "✔ Node.js detected: $nodeVersion" -ForegroundColor Green
-} catch {
-    Write-Host "❌ Error: Node.js is not installed on this system!" -ForegroundColor Red
+$nodeCheck = Get-Command node -ErrorAction SilentlyContinue
+if (-not $nodeCheck) {
+    Write-Host "❌ Error: Node.js is not installed on this system or not in system environment PATH!" -ForegroundColor Red
     Write-Host "Please download Node.js from https://nodejs.org/ before running this setup script." -ForegroundColor Yellow
     Exit 1
+} else {
+    $nodeVersion = node -v
+    Write-Host "✔ Node.js detected: $nodeVersion" -ForegroundColor Green
 }
 Write-Host ""
 
@@ -95,12 +96,12 @@ Write-Host ""
 Write-Host "[4/4] Activating server gateways..." -ForegroundColor Blue
 Write-Host "Spawning dev instances in standalone consoles..." -ForegroundColor Yellow
 
-# Spawn Backend Express Server
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd backend; Title Backend-Express-API; npm run dev"
+# Spawn Backend Express Server (using cmd.exe for native cross-console title compatibility)
+Start-Process cmd.exe -ArgumentList "/c", "title Backend-Express-API && cd backend && npm run dev"
 Write-Host "✔ Backend Dev Server spawned at http://localhost:5000" -ForegroundColor Green
 
 # Spawn Frontend Vite Client
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd frontend; Title Frontend-Vite-React; npm run dev"
+Start-Process cmd.exe -ArgumentList "/c", "title Frontend-Vite-React && cd frontend && npm run dev"
 Write-Host "✔ Frontend Dev Client spawned at http://localhost:5173" -ForegroundColor Green
 
 Write-Host ""
