@@ -20,6 +20,7 @@ const API_BASE_URL = 'http://localhost:5000/api/v1';
 
 interface User {
   id: string;
+  name: string;
   email: string;
   role: 'USER' | 'ADMIN';
   createdAt: string;
@@ -51,8 +52,10 @@ export default function App() {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
 
   // Input states for login/signup
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [registerRole, setRegisterRole] = useState<'USER' | 'ADMIN'>('USER');
 
   // Task list states
@@ -123,7 +126,7 @@ export default function App() {
     const url = mode === 'login' ? `${API_BASE_URL}/auth/login` : `${API_BASE_URL}/auth/register`;
     const payload = mode === 'login' 
       ? { email, password } 
-      : { email, password, role: registerRole };
+      : { name, email, password, passwordConfirm, role: registerRole };
 
     try {
       const response = await fetch(url, {
@@ -145,8 +148,10 @@ export default function App() {
         addToast(data.message || 'Successfully logged in!', 'success');
         
         // Clear auth inputs
+        setName('');
         setEmail('');
         setPassword('');
+        setPasswordConfirm('');
       } else {
         // Render validation errors if present
         if (data.errors && Array.isArray(data.errors)) {
@@ -170,6 +175,10 @@ export default function App() {
     setToken(null);
     setUser(null);
     setTasks([]);
+    setName('');
+    setEmail('');
+    setPassword('');
+    setPasswordConfirm('');
     addToast('Logged out successfully', 'success');
   };
 
@@ -352,7 +361,7 @@ export default function App() {
         // ==========================================
         <div className="auth-container">
           <div className="glass-panel auth-card">
-            <h1 className="auth-logo">ANTIGRAVITY TASK</h1>
+            <h1 className="auth-logo">TASK MANAGER</h1>
             <p className="auth-subtitle">
               {authMode === 'login' 
                 ? 'Sign in to access your secure task manager dashboard' 
@@ -360,6 +369,23 @@ export default function App() {
             </p>
 
             <form onSubmit={(e) => handleAuthSubmit(e, authMode)}>
+              {authMode === 'register' && (
+                <div className="form-group">
+                  <label className="form-label">Full Name</label>
+                  <div className="input-wrapper">
+                    <UserIcon size={18} className="input-icon" />
+                    <input
+                      type="text"
+                      required
+                      className="form-control"
+                      placeholder="John Doe"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="form-group">
                 <label className="form-label">Email Address</label>
                 <div className="input-wrapper">
@@ -389,6 +415,23 @@ export default function App() {
                   />
                 </div>
               </div>
+
+              {authMode === 'register' && (
+                <div className="form-group">
+                  <label className="form-label">Confirm Password</label>
+                  <div className="input-wrapper">
+                    <Lock size={18} className="input-icon" />
+                    <input
+                      type="password"
+                      required
+                      className="form-control"
+                      placeholder="Repeat your password"
+                      value={passwordConfirm}
+                      onChange={(e) => setPasswordConfirm(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
 
               {authMode === 'register' && (
                 <div className="form-group">
@@ -445,12 +488,12 @@ export default function App() {
         <div className="dashboard-container">
           {/* Top navigation Header */}
           <nav className="nav-bar">
-            <div className="nav-brand">ANTIGRAVITY TASK</div>
+            <div className="nav-brand">TASK MANAGER</div>
             <div className="nav-user">
               {user && (
                 <div className="user-badge">
                   <UserIcon size={14} />
-                  <span>{user.email}</span>
+                  <span>Welcome, {user.name} ({user.email})</span>
                   <span className={`user-role role-${user.role.toLowerCase()}`}>
                     {user.role}
                   </span>

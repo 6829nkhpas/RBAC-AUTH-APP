@@ -8,7 +8,7 @@ export class AuthService {
   private static readonly jwtExpiresIn = process.env.JWT_EXPIRES_IN || '1d';
 
   static async register(body: any) {
-    const { email, password, role } = body;
+    const { name, email, password, role } = body;
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
@@ -25,12 +25,14 @@ export class AuthService {
     // Create user
     const newUser = await prisma.user.create({
       data: {
+        name: name || 'User',
         email,
         password: hashedPassword,
         role: role || 'USER',
       },
       select: {
         id: true,
+        name: true,
         email: true,
         role: true,
         createdAt: true,
@@ -38,7 +40,7 @@ export class AuthService {
     });
 
     // Generate token
-    const token = this.generateToken(newUser.id, newUser.email, newUser.role);
+    const token = this.generateToken(newUser.id, newUser.email, newUser.role as 'USER' | 'ADMIN');
 
     return { user: newUser, token };
   }
@@ -62,13 +64,14 @@ export class AuthService {
     }
 
     // Generate token
-    const token = this.generateToken(user.id, user.email, user.role);
+    const token = this.generateToken(user.id, user.email, user.role as 'USER' | 'ADMIN');
 
     return {
       user: {
         id: user.id,
+        name: user.name,
         email: user.email,
-        role: user.role,
+        role: user.role as 'USER' | 'ADMIN',
         createdAt: user.createdAt,
       },
       token,
